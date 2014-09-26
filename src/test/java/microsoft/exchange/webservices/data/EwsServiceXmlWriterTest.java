@@ -9,84 +9,92 @@ import static org.junit.Assert.*;
 
 public class EwsServiceXmlWriterTest {
 
-    private EwsServiceXmlWriter ewsServiceXmlWriter;
+	private EwsServiceXmlWriter ewsServiceXmlWriter;
 
-    @Before
-    public void setUp() throws XMLStreamException {
-        ewsServiceXmlWriter = new EwsServiceXmlWriter(new ExchangeServiceBase() {
-            @Override
-            protected void processHttpErrorResponse(HttpWebRequest httpWebResponse, Exception webException) throws Exception {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        }, new ByteArrayOutputStream());
-    }
+	@Before
+	public void setUp() throws XMLStreamException {
+		ewsServiceXmlWriter = new EwsServiceXmlWriter(new ExchangeServiceBase() {
+			@Override
+			protected void processHttpErrorResponse(HttpWebRequest httpWebResponse, Exception webException) throws Exception {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		}, new ByteArrayOutputStream());
+	}
 
-    @After
-    public void tearDown() {
-        if (ewsServiceXmlWriter != null) {
-            ewsServiceXmlWriter.dispose();
-        }
-    }
+	@After
+	public void tearDown() {
+		if (ewsServiceXmlWriter != null) {
+			ewsServiceXmlWriter.dispose();
+		}
+	}
 
-    /**
-     * Test of tryConvertObjectToString method, of class EwsServiceXmlWriter.
-     * @throws javax.xml.stream.XMLStreamException
-     */
-    @Test
-    public void testTryConvertObjectToString() throws XMLStreamException {
-        Object longValue = (long) 42;
-        OutParam<String> output = new OutParam<String>();
+	/**
+	 * Test of tryConvertObjectToString method, of class EwsServiceXmlWriter.
+	 *
+	 * @throws javax.xml.stream.XMLStreamException
+	 */
+	@Test
+	public void testTryConvertObjectToString() throws XMLStreamException {
+		OutParam<String> output = new OutParam<String>();
 
-        boolean isConvertible;
-        ConvertibleEnum convertibleEnum = ConvertibleEnum.ORANGE;
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(convertibleEnum, output);
-        assertTrue("Couldn't convert an enum", isConvertible);
-        assertEquals("Wrong value for the converted enum", "ORANGE", output.getParam());
+		boolean isConvertible;
+		ConvertibleEnum convertibleEnum = ConvertibleEnum.ORANGE;
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(convertibleEnum, output);
+		assertTrue("Couldn't convert an enum", isConvertible);
+		assertEquals("Wrong value for the converted enum", "ORANGE", output.getParam());
 
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(Boolean.FALSE, output);
-        assertTrue("Couldn't convert Boolean.FALSE", isConvertible);
-        assertEquals("Wrong value for the converted Boolean.FALSE", "false", output.getParam());
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(Boolean.FALSE, output);
+		assertTrue("Couldn't convert Boolean.FALSE", isConvertible);
+		assertEquals("Wrong value for the converted Boolean.FALSE", "false", output.getParam());
 
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(Boolean.TRUE, output);
-        assertTrue("Couldn't convert Boolean.TRUE", isConvertible);
-        assertEquals("Wrong value for the converted Boolean.TRUE", "true", output.getParam());
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(Boolean.TRUE, output);
+		assertTrue("Couldn't convert Boolean.TRUE", isConvertible);
+		assertEquals("Wrong value for the converted Boolean.TRUE", "true", output.getParam());
 
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(null, output);
-        assertTrue("Couldn't convert null", isConvertible);
-        assertEquals("Wrong value for the converted null", null, output.getParam());
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(null, output);
+		assertTrue("Couldn't convert null", isConvertible);
+		assertEquals("Wrong value for the converted null", null, output.getParam());
 
-        String emptyString = "";
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(emptyString, output);
-        assertTrue("Couldn't convert an empty string", isConvertible);
-        assertEquals("Wrong value for the converted empty string", emptyString, output.getParam());
+		String emptyString = "";
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(emptyString, output);
+		assertTrue("Couldn't convert an empty string", isConvertible);
+		assertEquals("Wrong value for the converted empty string", emptyString, output.getParam());
 
-        String string = " test 123 ăș < > \" ' &";
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(string, output);
-        assertTrue("Couldn't convert a string", isConvertible);
-        assertEquals("Wrong value for the converted string", string, output.getParam());
+		String string = " test 123 ăș < > \" ' &";
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(string, output);
+		assertTrue("Couldn't convert a string", isConvertible);
+		assertEquals("Wrong value for the converted string", string, output.getParam());
 
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(-42, output);
-        assertTrue("Couldn't convert an Integer", isConvertible);
-        assertEquals("Wrong value for the converted Integer", "-42", output.getParam());
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(-42, output);
+		assertTrue("Couldn't convert an Integer", isConvertible);
+		assertEquals("Wrong value for the converted Integer", "-42", output.getParam());
 
-        final String text = "i search string provider";
-        ISearchStringProvider stringProvider = new ISearchStringProvider() {
-            public String getSearchString() {
-                return text;
-            }
-        };
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(stringProvider, output);
-        assertTrue("Couldn't convert an object implementing ISearchStringProvider", isConvertible);
-        assertEquals("Wrong value for the converted ISearchStringProvider", text, output.getParam());
+		final String text = "i search string provider";
+		ISearchStringProvider stringProvider = new ISearchStringProvider() {
+			public String getSearchString() {
+				return text;
+			}
+		};
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(stringProvider, output);
+		assertTrue("Couldn't convert an object implementing ISearchStringProvider", isConvertible);
+		assertEquals("Wrong value for the converted ISearchStringProvider", text, output.getParam());
 
-        isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(longValue, output);
-        assertTrue("Couldn't convert the long value", isConvertible);
-    }
+		Object longValue = Long.MAX_VALUE;
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(longValue, output);
+		assertTrue("Couldn't convert the Long value", isConvertible);
+		assertEquals("Wrong value for the converted Long", "9223372036854775807", output.getParam());
 
-    private enum ConvertibleEnum {
+		Character charValue = 'ß';
+		isConvertible = ewsServiceXmlWriter.tryConvertObjectToString(charValue, output);
+		assertTrue("Couldn't convert the Character value", isConvertible);
+		assertEquals("Wrong value for the converted Character", "ß", output.getParam());
 
-        APPLE, ORANGE, BANANA, PEAR
+	}
 
-    };
+	private enum ConvertibleEnum {
+
+		ORANGE
+
+	};
 
 }

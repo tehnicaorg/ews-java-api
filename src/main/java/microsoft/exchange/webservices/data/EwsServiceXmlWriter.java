@@ -91,18 +91,19 @@ class EwsServiceXmlWriter implements IDisposable {
 			} else if (value instanceof Date) {
 				str
 				.setParam(this.service
-						.convertDateTimeToUniversalDateTimeString(
-								(Date)value));
-			} else if (value.getClass().isPrimitive()) {
-				str.setParam(value.toString());
-			} else if (value instanceof String) {
+								.convertDateTimeToUniversalDateTimeString(
+										(Date)value));
+			} else if (value instanceof String
+					|| value instanceof Byte
+					|| value instanceof Short
+					|| value instanceof Integer
+					|| value instanceof Long
+					|| value instanceof Character) {
 				str.setParam(value.toString());
 			} else if (value instanceof ISearchStringProvider) {
-				ISearchStringProvider searchStringProvider = 
+				ISearchStringProvider searchStringProvider =
 					(ISearchStringProvider)value;
 				str.setParam(searchStringProvider.getSearchString());
-			} else if (value instanceof Integer) {
-				str.setParam(value.toString());
 			} else {
 				converted = false;
 			}
